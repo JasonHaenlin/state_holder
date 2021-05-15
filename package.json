@@ -1,0 +1,35 @@
+{
+  "name": "state-holder",
+  "version": "0.0.1",
+  "description": "mini store like using RxJs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --declaration",
+    "test": "jest",
+    "ex:sample": "tsc --target ES2016 --moduleResolution node src/example/sample.ts --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasonHaenlin/state_holder.git"
+  },
+  "keywords": [
+    "RxJs",
+    "Store",
+    "State holder",
+    "Service"
+  ],
+  "author": "Jason Haenlin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JasonHaenlin/state_holder/issues"
+  },
+  "homepage": "https://github.com/JasonHaenlin/state_holder#readme",
+  "dependencies": {
+    "rxjs": "^7.0.1",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "ts-jest": "^26.5.6"
+  }
+}
