@@ -18,6 +18,10 @@
         "lib": [
             "esnext",
         ],
+        "types": [
+            "jest",
+            "node"
+        ]
     },
     "formatCodeOptions": {
         "indentSize": 2,

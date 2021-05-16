@@ -1,19 +1,35 @@
-import dts from 'rollup-plugin-dts';
+import dts from 'rollup-plugin-dts'
+import esbuild from 'rollup-plugin-esbuild'
+
+const name = require('./package.json').main.replace(/\.js$/, '')
+
+const bundle = config => ({
+    ...config,
+    input: 'src/index.ts',
+    external: id => !/^[./]/.test(id),
+})
 
 export default [
-    {
-        input: 'dist/index.js',
-        output: {
-            file: 'index.js'
-        },
-        external: ['rxjs', 'rxjs/operators']
-    },
-    {
-        input: 'dist/index.d.ts',
-        output: {
-            file: 'index.d.ts'
-        },
+    bundle({
+        plugins: [esbuild()],
+        output: [
+            {
+                file: `${name}.js`,
+                format: 'cjs',
+                sourcemap: true,
+            },
+            {
+                file: `${name}.mjs`,
+                format: 'es',
+                sourcemap: true,
+            },
+        ],
+    }),
+    bundle({
         plugins: [dts()],
-        external: ['rxjs', 'rxjs/operators']
-    }
+        output: {
+            file: `${name}.d.ts`,
+            format: 'es',
+        },
+    }),
 ]

@@ -2,16 +2,15 @@
   "name": "@jeiraon/state-holder",
   "version": "1.0.5",
   "description": "mini store like using RxJs",
-  "files": [
-    "index.js",
-    "index.d.ts"
-  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf ./dist && tsc",
+    "build": "rollup -c",
     "test": "jest",
     "start": "npm run build && node dist/index.js",
     "start:dev": "nodemon",
-    "prepublishOnly": "npm run build && rollup -c"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -39,6 +38,7 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.48.0",
     "rollup-plugin-dts": "^3.0.1",
+    "rollup-plugin-esbuild": "^4.2.3",
     "ts-jest": "^26.5.6",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
