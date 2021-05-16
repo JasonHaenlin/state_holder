@@ -64,7 +64,7 @@ const addProductAction = createAction(
         })
 );
 // create a selector
-const productSelector = createSelector((state: ProductState): string[] => state.product);
+const productSelector = createSelector((state: ProductState): string[] => state.products);
 ```
 
 In a service
