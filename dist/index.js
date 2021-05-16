@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SimpleStateHolder = exports.createBasicState = exports.createSelector = exports.createAction = exports.stateHolderConfig = void 0;
+exports.SimpleStateHolder = exports.createBasicState = exports.createSelector = exports.createAction = exports.stateHolderConfig = exports.StateHolder = void 0;
 const state_holder_1 = require("./state-holder");
+Object.defineProperty(exports, "StateHolder", { enumerable: true, get: function () { return state_holder_1.StateHolder; } });
 exports.stateHolderConfig = {
     logger: true
 };

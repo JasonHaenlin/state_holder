@@ -1,11 +1,9 @@
-import { StateHolder } from "./state-holder";
+import { ActionDef, StateHolder } from "./state-holder";
+
+export { StateHolder }
 
 export const stateHolderConfig = {
     logger: true
-}
-export interface ActionDef<T, I> {
-    label: string;
-    action: Action<T, I>;
 }
 
 export type Action<T, I = any> = ((state: T) => T) | ((state: T, args: I) => T);

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ActionDef, Selector } from '.';
+import { Action, Selector } from '.';
 /**
  * Add a state holder manager to a class
  * Can be a simple state holder using the function `createBasicState` to create an instance of the stateHolder. You can also extend a class to add a state manager behaviour to it  (like service in Angular <(^^)> )
@@ -75,4 +75,8 @@ export declare abstract class StateHolder<T> {
     select$<I, O>(selector: Selector<T, O, I>, args?: I): Observable<O>;
     private devMode;
     private processPipe;
+}
+export interface ActionDef<T, I> {
+    label: string;
+    action: Action<T, I>;
 }

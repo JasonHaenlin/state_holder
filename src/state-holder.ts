@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable, pipe, UnaryFunction } from 'rxjs';
 import { distinctUntilChanged, filter, map, scan, shareReplay } from 'rxjs/operators';
-import { ActionDef, Selector, stateHolderConfig } from '.';
+import { Action, Selector, stateHolderConfig } from '.';
 
 
 /**
@@ -131,4 +131,9 @@ export abstract class StateHolder<T> {
         );
     }
 
+}
+
+export interface ActionDef<T, I> {
+    label: string;
+    action: Action<T, I>;
 }
