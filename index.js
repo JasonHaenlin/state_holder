@@ -1,21 +1,13 @@
-import { BehaviorSubject, Observable, pipe, UnaryFunction } from 'rxjs';
-import { distinctUntilChanged, filter, map, scan, shareReplay } from 'rxjs/operators';
-import { Action, Selector, stateHolderConfig } from '.';
-
+import { BehaviorSubject, pipe } from 'rxjs';
+import { scan, shareReplay, map, distinctUntilChanged, filter } from 'rxjs/operators';
+import { stateHolderConfig as stateHolderConfig$1 } from '.';
 
 /**
  * Add a state holder manager to a class
  * Can be a simple state holder using the function `createBasicState` to create an instance of the stateHolder. You can also extend a class to add a state manager behaviour to it  (like service in Angular <(^^)> )
  * @param T interface represeting the state structure
  */
-export abstract class StateHolder<T> {
-
-    private _stateHolderSource: BehaviorSubject<any>;
-    private _stateHolder$: Observable<T>;
-    private _lastActionName?: string;
-    private _initValue: T;
-    private _selectorsMap: { [key: string]: Observable<any> }
-
+class StateHolder {
     /**
      * Keep the state of the defined model as `T`
      * DevMode is enable in none production and log the model everytime it has been modified
@@ -44,54 +36,47 @@ export abstract class StateHolder<T> {
      * state.select$(textSelector).subscribe({next: (v) => console.log(v)});
      * ```
      */
-    constructor(initValues: T) {
-        this._stateHolderSource = new BehaviorSubject<T>(initValues);
+    constructor(initValues) {
+        this._stateHolderSource = new BehaviorSubject(initValues);
         this._initValue = initValues;
         this._selectorsMap = {};
         this._stateHolder$ = this._stateHolderSource
-            .pipe(
-                scan<[ActionDef<T, any>, any], T>(
-                    (all: T, act: [ActionDef<T, any>, any]) => {
-                        return act[0] ? act[0].action(all, act[1]) : all
-                    }, initValues),
-                shareReplay(1)
-            );
-        if (stateHolderConfig.logger) { this.devMode(); }
+            .pipe(scan((all, act) => {
+            return act[0] ? act[0].action(all, act[1]) : all;
+        }, initValues), shareReplay(1));
+        if (stateHolderConfig$1.logger) {
+            this.devMode();
+        }
     }
-
     /**
      * Warning : erase all the data and put it back in the original state.
      * Next state value will match the iniValue defined in the constructor.
      */
-    public get wipe(): T { return this._initValue; }
-
+    get wipe() { return this._initValue; }
     /**
      * Retrieve the state Observable of the model
      */
-    public get stateHolder$(): Observable<T> { return this._stateHolder$; }
-
+    get stateHolder$() { return this._stateHolder$; }
     /**
      * Utility function to clear the corresponding keys values
      * @param state the current state
      * @param keys the keys to be reset to the default value
      * @returns the new state
      */
-    public clear(state: T, ...keys: (keyof T)[]): T {
-        const keysCleared = {} as T;
+    clear(state, ...keys) {
+        const keysCleared = {};
         keys.forEach(k => this._initValue[k] != null ? keysCleared[k] = this._initValue[k] : null);
         return { ...state, ...keysCleared };
     }
-
     /**
      * Dispatch a new action to update the state
      * @param actionDef `ActionDef<T, S>` dispatch an action created by `createAction()`
      * @param args the arguments to dispatch to the state to update it
      */
-    public dispatch<U, S>(actionDef: ActionDef<T, S>, args?: U): void {
+    dispatch(actionDef, args) {
         this._lastActionName = actionDef.label;
         this._stateHolderSource.next([actionDef, args]);
     }
-
     /**
      * Select a value from the state
      * The select cache the observable created by the createSelector using the name of it.
@@ -102,38 +87,57 @@ export abstract class StateHolder<T> {
      * @param selector `Selector<T, O, I>` define the selector function
      * @returns the observable corresponding to your selector function
      */
-    public select$<I, O>(selector: Selector<T, O, I>, args?: I): Observable<O> {
+    select$(selector, args) {
         const cachedObs = this._selectorsMap[selector.name];
         if (cachedObs) {
-            return cachedObs as Observable<O>;
+            return cachedObs;
         }
         if (args) {
-            const newObs = this._stateHolder$.pipe(map((state: T) => selector(state, args)), this.processPipe());
+            const newObs = this._stateHolder$.pipe(map((state) => selector(state, args)), this.processPipe());
             this._selectorsMap[selector.name] = newObs;
             return newObs;
         }
-        const selectorWithoutArgs = selector as ((state: T) => O);
-        const newObs = this._stateHolder$.pipe(map((state: T) => selectorWithoutArgs(state)), this.processPipe());
+        const selectorWithoutArgs = selector;
+        const newObs = this._stateHolder$.pipe(map((state) => selectorWithoutArgs(state)), this.processPipe());
         this._selectorsMap[selector.name] = newObs;
         return newObs;
     }
-
-    private devMode(): void {
+    devMode() {
         this._stateHolder$
             .pipe(distinctUntilChanged())
-            .subscribe({ next: (state: T) => console.log({ action: this._lastActionName ?? 'initial', state: state }) });
+            .subscribe({ next: (state) => console.log({ action: this._lastActionName ?? 'initial', state: state }) });
     }
-
-    private processPipe(): UnaryFunction<Observable<{}>, Observable<any>> {
-        return pipe(
-            filter((d: any) => d !== null && d !== undefined),
-            distinctUntilChanged(),
-        );
+    processPipe() {
+        return pipe(filter((d) => d !== null && d !== undefined), distinctUntilChanged());
     }
-
 }
 
-export interface ActionDef<T, I> {
-    label: string;
-    action: Action<T, I>;
+const stateHolderConfig = {
+    logger: true
+};
+/**
+ * syntactic sugar to create a new action
+ * @param label Name your action, only used in logging mode to have a more explicite name
+ * @param action the action to dispatch
+ * @returns a new action to use in the dispatch function of the state instance
+ */
+const createAction = (label, action) => ({ label, action });
+/**
+ * syntactic sugar to create a new selector
+ * @param selector the select function
+ * @returns a new selector to use with the select$ function of the state instance
+ */
+const createSelector = (selector) => (selector);
+/**
+ * syntactic sugar to create a new basic state holder. Usefull if you do not need to add any other behaviour to it, only dispatching and selecting outside the class is usefull to you.
+ * @param initValues init value of the state
+ * @returns a new basic state holder
+ */
+const createBasicState = (initValues) => {
+    return new SimpleStateHolder(initValues);
+};
+class SimpleStateHolder extends StateHolder {
+    constructor(initValues) { super(initValues); }
 }
+
+export { SimpleStateHolder, StateHolder, createAction, createBasicState, createSelector, stateHolderConfig };

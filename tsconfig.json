@@ -5,16 +5,18 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
+        "esModuleInterop": true,
+        "declaration": true,
         "suppressImplicitAnyIndexErrors": true,
         "moduleResolution": "node",
         "stripInternal": false,
-        "target": "es5",
+        "target": "esnext",
         "outDir": "dist",
         "typeRoots": [
             "node_modules/@types"
         ],
         "lib": [
-            "es5",
+            "esnext",
         ],
     },
     "formatCodeOptions": {
