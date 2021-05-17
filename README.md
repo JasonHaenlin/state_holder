@@ -51,7 +51,7 @@ interface ProductState {
 // init state (when instantiating the class)
 const initProductState: ProductState = {
     products: [],
-}
+};
 // create an action
 const addProductAction = createAction(
         'Add product',

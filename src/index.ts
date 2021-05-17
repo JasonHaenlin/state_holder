@@ -119,7 +119,7 @@ export abstract class StateHolder<T> {
     private devMode(): void {
         this._stateHolder$
             .pipe(distinctUntilChanged())
-            .subscribe({ next: (state: T) => console.log({ action: this._lastActionName ?? 'initial', state: state }) });
+            .subscribe({ next: (state: T) => console.log({ action: this._lastActionName ? this._lastActionName : 'initial', state: state }) });
     }
 
     private processPipe(): UnaryFunction<Observable<{}>, Observable<any>> {

@@ -1,11 +1,10 @@
-import { Observable } from 'rxjs';
-
+import { Observable } from "rxjs";
 /**
  * Add a state holder manager to a class
  * Can be a simple state holder using the function `createBasicState` to create an instance of the stateHolder. You can also extend a class to add a state manager behaviour to it  (like service in Angular <(^^)> )
  * @param T interface represeting the state structure
  */
-declare abstract class StateHolder<T> {
+export declare abstract class StateHolder<T> {
     private _stateHolderSource;
     private _stateHolder$;
     private _lastActionName?;
@@ -76,36 +75,34 @@ declare abstract class StateHolder<T> {
     private devMode;
     private processPipe;
 }
-declare const stateHolderConfig: {
+export declare const stateHolderConfig: {
     logger: boolean;
 };
-interface ActionDef<T, I> {
+export interface ActionDef<T, I> {
     label: string;
     action: Action<T, I>;
 }
-declare type Action<T, I = any> = ((state: T) => T) | ((state: T, args: I) => T);
+export declare type Action<T, I = any> = ((state: T) => T) | ((state: T, args: I) => T);
 /**
  * syntactic sugar to create a new action
  * @param label Name your action, only used in logging mode to have a more explicite name
  * @param action the action to dispatch
  * @returns a new action to use in the dispatch function of the state instance
  */
-declare const createAction: <T, I>(label: string, action: Action<T, I>) => ActionDef<T, I>;
-declare type Selector<T, O, I = any> = ((state: T) => O) | ((state: T, args: I) => O);
+export declare const createAction: <T, I>(label: string, action: Action<T, I>) => ActionDef<T, I>;
+export declare type Selector<T, O, I = any> = ((state: T) => O) | ((state: T, args: I) => O);
 /**
  * syntactic sugar to create a new selector
  * @param selector the select function
  * @returns a new selector to use with the select$ function of the state instance
  */
-declare const createSelector: <T, O, I = any>(selector: Selector<T, O, I>) => Selector<T, O, I>;
+export declare const createSelector: <T, O, I = any>(selector: Selector<T, O, I>) => Selector<T, O, I>;
 /**
  * syntactic sugar to create a new basic state holder. Usefull if you do not need to add any other behaviour to it, only dispatching and selecting outside the class is usefull to you.
  * @param initValues init value of the state
  * @returns a new basic state holder
  */
-declare const createBasicState: <T>(initValues: T) => SimpleStateHolder<T>;
-declare class SimpleStateHolder<T> extends StateHolder<T> {
+export declare const createBasicState: <T>(initValues: T) => SimpleStateHolder<T>;
+export declare class SimpleStateHolder<T> extends StateHolder<T> {
     constructor(initValues: T);
 }
-
-export { Action, ActionDef, Selector, SimpleStateHolder, StateHolder, createAction, createBasicState, createSelector, stateHolderConfig };

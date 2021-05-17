@@ -1,22 +1,25 @@
 {
     "compilerOptions": {
+        "experimentalDecorators": true,
         "sourceMap": true,
+        "declaration": true,
         "strictFunctionTypes": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "esModuleInterop": true,
-        "declaration": true,
         "suppressImplicitAnyIndexErrors": true,
         "moduleResolution": "node",
         "stripInternal": false,
-        "target": "esnext",
+        "target": "ESNext",
+        "rootDir": "src",
         "outDir": "dist",
+        "forceConsistentCasingInFileNames": true,
         "typeRoots": [
             "node_modules/@types"
         ],
         "lib": [
-            "esnext",
+            "ESNext",
+            "DOM"
         ],
         "types": [
             "jest",
@@ -35,6 +38,5 @@
     ],
     "exclude": [
         "node_modules",
-        "dist"
     ]
 }
