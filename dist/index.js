@@ -86,7 +86,6 @@ export class StateHolder {
      * @returns the observable corresponding to your selector function
      */
     select$(selectorDef, args) {
-        console.log({ select: selectorDef.key });
         const cachedObs = this._selectorsMap[selectorDef.key];
         if (cachedObs) {
             return cachedObs;
