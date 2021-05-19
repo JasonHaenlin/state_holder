@@ -101,7 +101,6 @@ export abstract class StateHolder<T> {
      * @returns the observable corresponding to your selector function
      */
     public select$<I, O>(selectorDef: SelectorDef<T, O, I>, args?: I): Observable<O> {
-        console.log({ select: selectorDef.key });
         const cachedObs = this._selectorsMap[selectorDef.key];
         if (cachedObs) {
             return cachedObs as Observable<O>;

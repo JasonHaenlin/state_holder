@@ -85,20 +85,20 @@ export class StateHolder {
      * @param selector `Selector<T, O, I>` define the selector function
      * @returns the observable corresponding to your selector function
      */
-    select$(selector, args) {
-        console.log(selector.name);
-        const cachedObs = this._selectorsMap[selector.name];
+    select$(selectorDef, args) {
+        console.log({ select: selectorDef.key });
+        const cachedObs = this._selectorsMap[selectorDef.key];
         if (cachedObs) {
             return cachedObs;
         }
         if (args) {
-            const newObs = this._stateHolder$.pipe(map((state) => selector(state, args)), this.processPipe());
-            this._selectorsMap[selector.name] = newObs;
+            const newObs = this._stateHolder$.pipe(map((state) => selectorDef.selector(state, args)), this.processPipe());
+            this._selectorsMap[selectorDef.key] = newObs;
             return newObs;
         }
-        const selectorWithoutArgs = selector;
+        const selectorWithoutArgs = selectorDef.selector;
         const newObs = this._stateHolder$.pipe(map((state) => selectorWithoutArgs(state)), this.processPipe());
-        this._selectorsMap[selector.name] = newObs;
+        this._selectorsMap[selectorDef.key] = newObs;
         return newObs;
     }
     devMode() {
@@ -114,20 +114,26 @@ export const stateHolderConfig = {
     logger: true
 };
 /**
- * syntactic sugar to create a new action
+ * Create a new action
  * @param label Name your action, only used in logging mode to have a more explicite name
  * @param action the action to dispatch
  * @returns a new action to use in the dispatch function of the state instance
  */
 export const createAction = (label, action) => ({ label, action });
 /**
- * syntactic sugar to create a new selector
+ * Create a new selector
  * @param selector the select function
  * @returns a new selector to use with the select$ function of the state instance
  */
-export const createSelector = (selector) => (selector);
+export const createSelector = (selector, key) => {
+    if (!key) {
+        const id = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", ""));
+        return ({ key: `${id}`, selector });
+    }
+    return ({ key, selector });
+};
 /**
- * syntactic sugar to create a new basic state holder. Usefull if you do not need to add any other behaviour to it, only dispatching and selecting outside the class is usefull to you.
+ * Create a new basic state holder. Usefull if you do not need to add any other behaviour to it, only dispatching and selecting outside the class is usefull to you.
  * @param initValues init value of the state
  * @returns a new basic state holder
  */
