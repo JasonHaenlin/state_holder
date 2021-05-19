@@ -100,19 +100,20 @@ export abstract class StateHolder<T> {
      * @param selector `Selector<T, O, I>` define the selector function
      * @returns the observable corresponding to your selector function
      */
-    public select$<I, O>(selector: Selector<T, O, I>, args?: I): Observable<O> {
-        const cachedObs = this._selectorsMap[selector.name];
+    public select$<I, O>(selectorDef: SelectorDef<T, O, I>, args?: I): Observable<O> {
+        console.log({ select: selectorDef.key });
+        const cachedObs = this._selectorsMap[selectorDef.key];
         if (cachedObs) {
             return cachedObs as Observable<O>;
         }
         if (args) {
-            const newObs = this._stateHolder$.pipe(map((state: T) => selector(state, args)), this.processPipe());
-            this._selectorsMap[selector.name] = newObs;
+            const newObs = this._stateHolder$.pipe(map((state: T) => selectorDef.selector(state, args)), this.processPipe());
+            this._selectorsMap[selectorDef.key] = newObs;
             return newObs;
         }
-        const selectorWithoutArgs = selector as ((state: T) => O);
+        const selectorWithoutArgs = selectorDef.selector as ((state: T) => O);
         const newObs = this._stateHolder$.pipe(map((state: T) => selectorWithoutArgs(state)), this.processPipe());
-        this._selectorsMap[selector.name] = newObs;
+        this._selectorsMap[selectorDef.key] = newObs;
         return newObs;
     }
 
@@ -142,23 +143,35 @@ export interface ActionDef<T, I> {
 
 export type Action<T, I = any> = ((state: T) => T) | ((state: T, args: I) => T);
 /**
- * syntactic sugar to create a new action
+ * Create a new action
  * @param label Name your action, only used in logging mode to have a more explicite name
  * @param action the action to dispatch
  * @returns a new action to use in the dispatch function of the state instance
  */
 export const createAction = <T, I>(label: string, action: Action<T, I>): ActionDef<T, I> => ({ label, action })
 
+export interface SelectorDef<T, O, I = any> {
+    key: string;
+    selector: Selector<T, O, I>;
+}
+
 export type Selector<T, O, I = any> = ((state: T) => O) | ((state: T, args: I) => O);
+
 /**
- * syntactic sugar to create a new selector
+ * Create a new selector
  * @param selector the select function
  * @returns a new selector to use with the select$ function of the state instance
  */
-export const createSelector = <T, O, I = any>(selector: Selector<T, O, I>): Selector<T, O, I> => (selector)
+export const createSelector = <T, O, I = any>(selector: Selector<T, O, I>, key?: string): SelectorDef<T, O, I> => {
+    if (!key) {
+        const id = parseInt(Math.ceil(Math.random() * Date.now()).toPrecision(8).toString().replace(".", ""));
+        return ({ key: `${id}`, selector });
+    }
+    return ({ key, selector })
+}
 
 /**
- * syntactic sugar to create a new basic state holder. Usefull if you do not need to add any other behaviour to it, only dispatching and selecting outside the class is usefull to you.
+ * Create a new basic state holder. Usefull if you do not need to add any other behaviour to it, only dispatching and selecting outside the class is usefull to you.
  * @param initValues init value of the state
  * @returns a new basic state holder
  */

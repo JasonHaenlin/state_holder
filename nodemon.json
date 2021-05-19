@@ -2,7 +2,7 @@
     "watch": [
         "src"
     ],
-    "ext": ".ts,.js",
+    "ext": "ts",
     "ignore": [],
-    "exec": "ts-node ./src/index.ts"
+    "exec": "ts-node -P tsconfig.playground.json ./src/playground.ts"
 }

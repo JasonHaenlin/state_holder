@@ -15,6 +15,7 @@
     "test": "jest",
     "start": "npm run build && node dist/index.js",
     "start:dev": "nodemon",
+    "start:playground": "ts-node -P tsconfig.playground.json ./src/playground.ts",
     "prepublishOnly": "npm run build"
   },
   "repository": {

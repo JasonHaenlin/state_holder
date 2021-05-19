@@ -1,8 +1,6 @@
 import { createAction, createBasicState, createSelector, SimpleStateHolder, stateHolderConfig } from './../src/index';
 import { take } from 'rxjs/operators';
 
-
-
 stateHolderConfig.logger = false;
 
 describe('Create simple basic state holder', () => {
