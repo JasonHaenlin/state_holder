@@ -141,5 +141,5 @@ I like to extend my **Angular services** with the **state-holder** when I do nee
 
 # Todo
 - [x] : Basic implementation
-- [ ] : Arguments to selector (eg: to get by id)
+- [x] : Arguments to selector (eg: to get by id)
 - [ ] : ...
