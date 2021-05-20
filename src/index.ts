@@ -12,7 +12,7 @@ export abstract class StateHolder<T> {
     private _stateHolder$: Observable<T>;
     private _lastActionName?: string;
     private _initValue: T;
-    private _selectorsMap: { [key: string]: Observable<any> }
+    private _selectorsMap: Map<any, Observable<any>>;
 
     /**
      * Keep the state of the defined model as `T`
@@ -45,7 +45,7 @@ export abstract class StateHolder<T> {
     constructor(initValues: T) {
         this._stateHolderSource = new BehaviorSubject<T>(initValues);
         this._initValue = initValues;
-        this._selectorsMap = {};
+        this._selectorsMap = new Map();
         this._stateHolder$ = this._stateHolderSource
             .pipe(
                 scan<[ActionDef<T, any>, any], T>(
@@ -94,6 +94,8 @@ export abstract class StateHolder<T> {
      * Select a value from the state
      * The select cache the observable created by the createSelector using the name of it.
      *
+     * ONLY Primitive, Array and Object can be cached (for the moment)
+     *
      * If you change the behaviour of an already selected function with the same name,
      * you will not get a new observable. You must create a new one with a new name.
      *
@@ -101,18 +103,19 @@ export abstract class StateHolder<T> {
      * @returns the observable corresponding to your selector function
      */
     public select$<I, O>(selectorDef: SelectorDef<T, O, I>, args?: I): Observable<O> {
-        const cachedObs = this._selectorsMap[selectorDef.key];
+        const key = this.makeKey(selectorDef.key, args);
+        const cachedObs = this._selectorsMap.get(key)
         if (cachedObs) {
             return cachedObs as Observable<O>;
         }
         if (args) {
             const newObs = this._stateHolder$.pipe(map((state: T) => selectorDef.selector(state, args)), this.processPipe());
-            this._selectorsMap[selectorDef.key] = newObs;
+            this._selectorsMap.set(key, newObs);
             return newObs;
         }
         const selectorWithoutArgs = selectorDef.selector as ((state: T) => O);
         const newObs = this._stateHolder$.pipe(map((state: T) => selectorWithoutArgs(state)), this.processPipe());
-        this._selectorsMap[selectorDef.key] = newObs;
+        this._selectorsMap.set(key, newObs);
         return newObs;
     }
 
@@ -129,6 +132,23 @@ export abstract class StateHolder<T> {
         );
     }
 
+    private makeKey(key: string, args: any): string {
+        if (!args) {
+            return key;
+        }
+        if (isObject(args)) {
+            return `${key}${JSON.stringify(args)}`;
+        }
+        return `${key}${args.toString()}`;
+    }
+}
+
+export const isObject = (x: any): x is object => {
+    return x && x.constructor === Object;
+}
+
+export const isArray = (x: any): x is Array<any> => {
+    return x && x.constructor === Array;
 }
 
 export const stateHolderConfig = {

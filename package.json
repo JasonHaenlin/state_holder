@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/JasonHaenlin/state_holder#readme",
   "peerDependencies": {
-    "rxjs": "^6.6.7"
+    "rxjs": "^6.6.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",

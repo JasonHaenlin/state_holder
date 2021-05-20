@@ -103,9 +103,38 @@ export class ProductListComponent implements OnInit {
 }
 ```
 
+## Parameterized Selector
+
+```ts
+// Primitive (number, string)
+const selectSample = createSelector((state: SampleState, id: number) => state.samples[id]);
+state.select$(selectSample, 0).subscribe({ next: s => console.log(s) });
+
+// Array
+const selectSamples = createSelector((state: SampleState, ids: number[]) => {
+    const samples = [];
+    for (const id of ids) {
+        samples.push(state.samples[id]);
+    }
+    return samples;
+});
+
+state.select$(selectSamples, [0, 2]).subscribe({ next: s => console.log(s)});
+
+// Object
+const selectSamples = createSelector((state: SampleState, { id, key }: { id: number, key: string }) => {
+    return {
+        id: state.samples[id],
+        key: state.dict[key]
+    };
+});
+
+state.select$(selectSamples, { id: 0, key: 'first' }).subscribe({next: s => console.log(s)});
+```
+
 # Dependency
 
-`rxjs: ^7.0.1`
+`rxjs: ^6.6.0`
 
 # Note
 I like to extend my **Angular services** with the **state-holder** when I do need a big Store like **NgRx** in my app.
