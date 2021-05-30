@@ -7,6 +7,21 @@ state holder is a "mini store like" using RxJs
 npm install @jeiraon/state-holder
 ```
 
+**rxjs** is set as a **peerDependencies** to avoid conflict with your main project. In most use case, you should already have it installed so it will use the same version. Otherwise, you can install it.
+
+```sh
+npm install rxjs@^6.6.0
+```
+
+
+# Configuration
+
+You can turn on the action logs by using
+```ts
+stateHolderConfig.logger = true;
+```
+Each time an action is dispatched, you will be able to see the logs in your browser's console in the following form `{ action, state }`
+
 # Example
 
 ## Basic
@@ -90,8 +105,8 @@ class ProductService extends StateHolder<ProductState> {
 In a component
 ```ts
 @Component({
-  templateUrl: './productList.component.html',
-  styleUrls: ['./productList.component.scss']
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent implements OnInit {
     // use `async` pipe in html to subscribe to it and use the data
@@ -139,7 +154,10 @@ state.select$(selectSamples, { id: 0, key: 'first' }).subscribe({next: s => cons
 # Note
 I like to extend my **Angular services** with the **state-holder** when I do need a big Store like **NgRx** in my app.
 
+**CommonJS is not supported.**, This module has been build for **ESNext**
+
 # Todo
 - [x] : Basic implementation
 - [x] : Arguments to selector (eg: to get by id)
+- [ ] : Add utilitaries functions to help when selecting or disptaching actions
 - [ ] : ...

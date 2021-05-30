@@ -65,6 +65,8 @@ export declare abstract class StateHolder<T> {
      * Select a value from the state
      * The select cache the observable created by the createSelector using the name of it.
      *
+     * ONLY Primitive, Array and Object can be cached (for the moment)
+     *
      * If you change the behaviour of an already selected function with the same name,
      * you will not get a new observable. You must create a new one with a new name.
      *
@@ -74,7 +76,10 @@ export declare abstract class StateHolder<T> {
     select$<I, O>(selectorDef: SelectorDef<T, O, I>, args?: I): Observable<O>;
     private devMode;
     private processPipe;
+    private makeKey;
 }
+export declare const isObject: (x: any) => x is object;
+export declare const isArray: (x: any) => x is any[];
 export declare const stateHolderConfig: {
     logger: boolean;
 };

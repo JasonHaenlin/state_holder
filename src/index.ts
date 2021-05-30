@@ -152,7 +152,7 @@ export const isArray = (x: any): x is Array<any> => {
 }
 
 export const stateHolderConfig = {
-    logger: true
+    logger: false
 }
 
 export interface ActionDef<T, I> {

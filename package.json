@@ -27,7 +27,9 @@
     "Store",
     "State-holder",
     "State-manager",
-    "Service"
+    "Service",
+    "Observable",
+    "Angular"
   ],
   "author": "Jason Haenlin",
   "license": "MIT",
