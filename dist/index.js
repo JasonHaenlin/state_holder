@@ -128,7 +128,7 @@ export const isArray = (x) => {
     return x && x.constructor === Array;
 };
 export const stateHolderConfig = {
-    logger: true
+    logger: false
 };
 /**
  * Create a new action
