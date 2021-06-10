@@ -109,7 +109,10 @@ export class StateHolder {
             .subscribe({ next: (state) => console.log({ action: this._lastActionName ? this._lastActionName : 'initial', state: state }) });
     }
     processPipe() {
-        return pipe(filter((d) => d !== null && d !== undefined), distinctUntilChanged());
+        if (!stateHolderConfig.allowDistinctToPass) {
+            return pipe(filter((d) => d !== null && d !== undefined), distinctUntilChanged());
+        }
+        return pipe();
     }
     makeKey(key, args) {
         if (!args) {
@@ -128,7 +131,8 @@ export const isArray = (x) => {
     return x && x.constructor === Array;
 };
 export const stateHolderConfig = {
-    logger: false
+    logger: false,
+    allowDistinctToPass: false,
 };
 /**
  * Create a new action

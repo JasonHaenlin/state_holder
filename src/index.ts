@@ -1,5 +1,5 @@
-import { BehaviorSubject, Observable, UnaryFunction, pipe } from "rxjs";
-import { scan, shareReplay, map, distinctUntilChanged, filter } from "rxjs/operators";
+import { BehaviorSubject, Observable, UnaryFunction, pipe, MonoTypeOperatorFunction } from "rxjs";
+import { scan, shareReplay, map, distinctUntilChanged, filter, tap } from "rxjs/operators";
 
 /**
  * Add a state holder manager to a class
@@ -126,11 +126,14 @@ export abstract class StateHolder<T> {
     }
 
     private processPipe(): UnaryFunction<Observable<{}>, Observable<any>> {
+        if (!stateHolderConfig.allowNullableToPass && !stateHolderConfig.allowDistinctToPass) {
+            return pipe(filter((d: any) => d !== null && d !== undefined), distinctUntilChanged());
+        }
         if (!stateHolderConfig.allowDistinctToPass) {
-            return pipe(
-                filter((d: any) => d !== null && d !== undefined),
-                distinctUntilChanged(),
-            );
+            return pipe(distinctUntilChanged());
+        }
+        if (!stateHolderConfig.allowNullableToPass) {
+            return pipe(filter((d: any) => d !== null && d !== undefined));
         }
         return pipe();
     }
@@ -157,6 +160,7 @@ export const isArray = (x: any): x is Array<any> => {
 export const stateHolderConfig = {
     logger: false,
     allowDistinctToPass: false,
+    allowNullableToPass: false,
 }
 
 export interface ActionDef<T, I> {

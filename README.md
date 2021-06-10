@@ -12,13 +12,13 @@ npm install @jeiraon/state-holder
 ```sh
 npm install rxjs@^6.6.0
 ```
-
-
 # Configuration
 
 You can turn on the action logs by using
 ```ts
-stateHolderConfig.logger = true;
+stateHolderConfig.logger = false; // default false
+stateHolderConfig.allowDistinctToPass = false; // default false
+stateHolderConfig.allowNullableToPass = false; // default false
 ```
 Each time an action is dispatched, you will be able to see the logs in your browser's console in the following form `{ action, state }`
 
