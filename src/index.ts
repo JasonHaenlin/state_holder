@@ -126,10 +126,13 @@ export abstract class StateHolder<T> {
     }
 
     private processPipe(): UnaryFunction<Observable<{}>, Observable<any>> {
-        return pipe(
-            filter((d: any) => d !== null && d !== undefined),
-            distinctUntilChanged(),
-        );
+        if (!stateHolderConfig.allowDistinctToPass) {
+            return pipe(
+                filter((d: any) => d !== null && d !== undefined),
+                distinctUntilChanged(),
+            );
+        }
+        return pipe();
     }
 
     private makeKey(key: string, args: any): string {
@@ -152,7 +155,8 @@ export const isArray = (x: any): x is Array<any> => {
 }
 
 export const stateHolderConfig = {
-    logger: false
+    logger: false,
+    allowDistinctToPass: false,
 }
 
 export interface ActionDef<T, I> {
