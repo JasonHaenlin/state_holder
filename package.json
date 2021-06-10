@@ -1,6 +1,6 @@
 {
   "name": "@jeiraon/state-holder",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "mini store like using RxJs",
   "type": "module",
   "main": "dist/index.js",
