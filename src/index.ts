@@ -55,6 +55,8 @@ export abstract class StateHolder<T> {
                 shareReplay(1)
             );
         if (stateHolderConfig.logger) { this.devMode(); }
+        // need at least, one subscriber to dispatch actions
+        else { this._stateHolder$.subscribe(); }
     }
 
     /**

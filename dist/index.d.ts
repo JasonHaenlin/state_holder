@@ -83,6 +83,7 @@ export declare const isArray: (x: any) => x is any[];
 export declare const stateHolderConfig: {
     logger: boolean;
     allowDistinctToPass: boolean;
+    allowNullableToPass: boolean;
 };
 export interface ActionDef<T, I> {
     label: string;

@@ -109,8 +109,14 @@ export class StateHolder {
             .subscribe({ next: (state) => console.log({ action: this._lastActionName ? this._lastActionName : 'initial', state: state }) });
     }
     processPipe() {
-        if (!stateHolderConfig.allowDistinctToPass) {
+        if (!stateHolderConfig.allowNullableToPass && !stateHolderConfig.allowDistinctToPass) {
             return pipe(filter((d) => d !== null && d !== undefined), distinctUntilChanged());
+        }
+        if (!stateHolderConfig.allowDistinctToPass) {
+            return pipe(distinctUntilChanged());
+        }
+        if (!stateHolderConfig.allowNullableToPass) {
+            return pipe(filter((d) => d !== null && d !== undefined));
         }
         return pipe();
     }
@@ -133,6 +139,7 @@ export const isArray = (x) => {
 export const stateHolderConfig = {
     logger: false,
     allowDistinctToPass: false,
+    allowNullableToPass: false,
 };
 /**
  * Create a new action
